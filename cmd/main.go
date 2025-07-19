@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"time"
 
+	"github.com/google/uuid"
 	"github.com/ismetinan/BilkentForum/internal/database"
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
@@ -17,6 +19,13 @@ type LoginRequest struct {
 }
 type apiConfig struct {
 	DatabaseQueries *database.Queries
+}
+type User struct {
+	ID             uuid.UUID
+	CreatedAt      time.Time
+	UpdatedAt      time.Time
+	Email          string
+	HashedPassword string
 }
 
 func main() {
@@ -45,7 +54,9 @@ func main() {
 
 	mux.Handle("/", http.FileServer(http.Dir(".")))
 
-	mux.HandleFunc("/api/healthz", checkHealth)
+	mux.HandleFunc("GET /api/healthz", checkHealth)
+	mux.HandleFunc("POST /api/users", apiConfig.handlerUsersCreate)
+	mux.HandleFunc("POST /api/login", apiConfig.handlerLogin)
 
 	fmt.Println("Starting server on http://localhost:8080")
 
