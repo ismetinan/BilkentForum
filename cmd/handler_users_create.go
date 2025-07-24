@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/ismetinan/BilkentForum/internal/auth"
@@ -48,4 +49,5 @@ func (cfg *apiConfig) handlerUsersCreate(w http.ResponseWriter, r *http.Request)
 			Email:     user.Email,
 		},
 	})
+	fmt.Println("User created:", user.Email)
 }

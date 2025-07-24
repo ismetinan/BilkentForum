@@ -33,8 +33,13 @@ type User struct {
 func main() {
 	// This is the main entry point of the application.
 	// You can initialize your application here.
-	godotenv.Load()
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
 	dbURL := os.Getenv("DB_URL")
+	fmt.Println()
 	jwtSecret := os.Getenv("JWT_SECRET")
 	if jwtSecret == "" {
 		log.Fatal("JWT_SECRET environment variable is not set")
@@ -55,7 +60,7 @@ func main() {
 	mux := http.NewServeMux()
 	server := &http.Server{
 		Addr:    ":8080",
-		Handler: mux,
+		Handler: withCORS(mux),
 	}
 
 	mux.Handle("/", http.FileServer(http.Dir(".")))

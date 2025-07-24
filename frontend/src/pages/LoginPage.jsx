@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import logo from '../public/logo2.png';
+import logo from '../../public/logo2.png';
 import { Link } from 'react-router-dom';
 
 const LoginForm = () => {
@@ -16,7 +16,6 @@ const LoginForm = () => {
 
   return (
     <div className="login-container">
-      <span style={{ color: '#111e24' }}>Welcome to Bilkent Forum</span>
       <img src={logo} style={{ width: '500px', height: 'auto' }} alt="Description" />
       <form className="login-form" onSubmit={handleLogin}>
         <input
