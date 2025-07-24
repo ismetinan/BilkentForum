@@ -34,6 +34,12 @@ func (cfg *apiConfig) handlerLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// ✅ Add this password check
+	if err := auth.CheckPasswordHash(params.Password, user.HashedPassword); err != nil {
+		respondWithError(w, http.StatusUnauthorized, "Incorrect email or password", err)
+		return
+	}
+
 	accessToken, err := auth.MakeJWT(
 		user.ID,
 		cfg.jwtSecret,
@@ -70,5 +76,4 @@ func (cfg *apiConfig) handlerLogin(w http.ResponseWriter, r *http.Request) {
 		Token:        accessToken,
 		RefreshToken: refreshToken,
 	})
-
 }

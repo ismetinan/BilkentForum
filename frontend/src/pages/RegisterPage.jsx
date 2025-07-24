@@ -36,7 +36,7 @@ export default function RegisterPage() {
         throw new Error(result.error || "Registration failed");
       }
 
-      navigate('/'); // Redirect to login
+      navigate('/login'); // Redirect to login
     } catch (err) {
       setError(err.message);
     }
@@ -77,7 +77,7 @@ export default function RegisterPage() {
         />
         <button type="submit" className="register-button">Register</button>
         <div style={{ marginTop: '1rem' }}>
-          <a href="/" style={{ color: '#aaa' }}>Back to Login</a>
+          <a href="/login" style={{ color: '#aaa' }}>Back to Login</a>
         </div>
       </form>
     </div>

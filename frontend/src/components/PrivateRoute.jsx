@@ -1,15 +1,13 @@
-// src/components/PrivateRoute.jsx
-import React from 'react';
-import { Navigate } from 'react-router-dom';
+import { useContext } from "react";
+import { Navigate } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
 
-const PrivateRoute = ({ children }) => {
-  const token = localStorage.getItem('token'); // You saved it after login, right?
+export const Private = ({ children }) => {
+  const { token } = useContext(AuthContext);
 
   if (!token) {
-    return <Navigate to="/" />;
+    return <Navigate to="/login" replace />;
   }
 
   return children;
 };
-
-export default PrivateRoute;
