@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"time"
@@ -19,6 +20,7 @@ type LoginRequest struct {
 }
 type apiConfig struct {
 	DatabaseQueries *database.Queries
+	jwtSecret       string
 }
 type User struct {
 	ID             uuid.UUID
@@ -33,7 +35,10 @@ func main() {
 	// You can initialize your application here.
 	godotenv.Load()
 	dbURL := os.Getenv("DB_URL")
-
+	jwtSecret := os.Getenv("JWT_SECRET")
+	if jwtSecret == "" {
+		log.Fatal("JWT_SECRET environment variable is not set")
+	}
 	db, err := sql.Open("postgres", dbURL)
 	if err != nil {
 		fmt.Println("Error opening database:", err)
@@ -42,6 +47,7 @@ func main() {
 	defer db.Close()
 	apiConfig := &apiConfig{
 		DatabaseQueries: database.New(db),
+		jwtSecret:       jwtSecret,
 	}
 	fmt.Println("Database connection established")
 	fmt.Println("Starting the Bilkent Forum API...")
@@ -57,6 +63,8 @@ func main() {
 	mux.HandleFunc("GET /api/healthz", checkHealth)
 	mux.HandleFunc("POST /api/users", apiConfig.handlerUsersCreate)
 	mux.HandleFunc("POST /api/login", apiConfig.handlerLogin)
+	mux.HandleFunc("POST /api/refresh", apiConfig.handlerRefresh)
+	mux.HandleFunc("POST /api/revoke", apiConfig.handlerRevoke)
 
 	fmt.Println("Starting server on http://localhost:8080")
 
