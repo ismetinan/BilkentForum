@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import logo from '../public/logo.png'; // make sure you place the logo image here
+import logo from '../public/logo2.png';
+import { Link } from 'react-router-dom';
 
 const LoginForm = () => {
   const [email, setEmail] = useState('');
@@ -15,7 +16,8 @@ const LoginForm = () => {
 
   return (
     <div className="login-container">
-      <img src={logo} alt="Bilkent Logo" className="login-logo" />
+      <span style={{ color: '#111e24' }}>Welcome to Bilkent Forum</span>
+      <img src={logo} style={{ width: '500px', height: 'auto' }} alt="Description" />
       <form className="login-form" onSubmit={handleLogin}>
         <input
           className="login-input"
@@ -33,10 +35,10 @@ const LoginForm = () => {
         />
         <button className="login-button" type="submit">LOGIN</button>
       </form>
-      <div className="login-links">
-        <a href="#" style={{ color: '#aaa' }}>Bilkent Forum</a> &nbsp;•&nbsp;
-        <a href="#" style={{ color: '#aaa' }}>Register</a>
-      </div>
+          <div className="login-links">
+            <a href="#" style={{ color: '#aaa' }}>Forgot my Password</a> &nbsp;•&nbsp;
+            <Link to="/register" style={{ color: '#aaa' }}>Register</Link>
+          </div>
     </div>
   );
 };

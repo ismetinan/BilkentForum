@@ -53,3 +53,35 @@ body {
   font-size: 14px;
   text-align: center;
 }
+
+.register-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.register-input {
+  padding: 10px;
+  border: 1px solid #007acc;
+  background-color: #1e2a30;
+  color: white;
+}
+
+.register-button {
+  background-color: #007acc;
+  color: white;
+  padding: 10px;
+  border: none;
+  cursor: pointer;
+}
+
+.register-button:hover {
+  background-color: #005f99;
+}
+
+.register-links {
+  margin-top: 10px;
+  font-size: 14px;
+  text-align: center;
+}
