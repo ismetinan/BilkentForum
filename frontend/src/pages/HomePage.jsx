@@ -1,13 +1,17 @@
 
-import React from 'react';
+import React from "react";
+import Navbar from "../components/Navbar";
 
-const HomePage = () => {    
+const HomePage = () => {
   return (
-    <div className="login-container">
-      <h1>Welcome to Bilkent Forum</h1>
-      <p>This is the main page. You're successfully logged in.</p>
-    </div>
+    <>
+      <Navbar />
+      <div style={{ padding: "20px", color: "#333" }}>
+        <h1>Welcome to the Home Page</h1>
+      </div>
+    </>
   );
 };
 
 export default HomePage;
+
