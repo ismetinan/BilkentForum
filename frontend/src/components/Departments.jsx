@@ -1,5 +1,6 @@
 import React from "react";
 import "../Departments.css";
+import { Link } from "react-router-dom";
 
 const faculties = [
   {
@@ -14,7 +15,7 @@ const faculties = [
     departments: [
       "Department of Architecture",
       "Department of Communication and Design",
-      "Department of Fine Arts",
+      "Department of Fine Arts",    
       "Department of Graphic Design",
       "Department of Interior Architecture and Environmental Design",
       "Department of Urban Design and Landscape Architecture",
@@ -92,13 +93,13 @@ export default function Departments() {
           <h2 className="faculty-title">{faculty.name}</h2>
           <div className="department-grid">
             {faculty.departments.map((dept, index) => (
-              <div
+              <Link
+                to={`/department/${encodeURIComponent(dept)}`}
                 key={index}
                 className="department-card"
-                onClick={() => alert(`Navigating to ${dept}`)}
               >
                 {dept}
-              </div>
+              </Link>
             ))}
           </div>
         </div>

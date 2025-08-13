@@ -3,6 +3,7 @@ import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import HomePage from "./pages/HomePage";
 import { Private } from "./components/PrivateRoute";
+import DepartmentPage from "./pages/DepartmentPage";
 import React from "react";
 import { AuthProvider } from "./context/AuthContext";
 import "./index.css";
@@ -13,6 +14,7 @@ function App() {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
       <Route path="/home" element={<Private><HomePage /></Private>} />
+      <Route path="/department/:deptName" element={<DepartmentPage />} />
     </Routes>
   );
 }

@@ -1,0 +1,26 @@
+.department-page {
+  padding: 20px;
+  text-align: center;
+}
+
+.course-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.course-button {
+  background: #3498db;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: background 0.2s ease;
+}
+
+.course-button:hover {
+  background: #2980b9;
+}

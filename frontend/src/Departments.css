@@ -1,13 +1,8 @@
 .departments-container {
-  padding: 50px;
+  padding: 50px 20px;
   max-width: 1200px;
   margin: auto;
-  /* Add top margin to account for fixed navbar */
-  margin-top: 80px; /* Adjust this value based on your navbar height */
-  /* Alternative: use padding-top instead of margin-top */
-  /* padding-top: 130px; */
-  min-height: 100vh; /* Ensure container has enough height */
-  overflow: visible; /* Make sure content isn't hidden */
+  min-height: 100vh;
 }
 
 .faculty-section {
