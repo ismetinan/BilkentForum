@@ -1,17 +1,17 @@
-import React, { useState } from "react";
-import Navbar from "../components/Navbar";
+// src/pages/HomePage.jsx
+import React from "react";
 import Departments from "../components/Departments";
+import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-
+  
 const HomePage = () => {
-  const [navbarHeight, setNavbarHeight] = useState(0);
-
   return (
     <>
-      <Navbar onHeightChange={setNavbarHeight} />
-      <main style={{ paddingTop: navbarHeight }}>
-        <Departments />
-      </main>
+      <Navbar />
+      <Departments />
+      <div>
+        {/* Additional home page content */}
+      </div>
       <Footer />
     </>
   );

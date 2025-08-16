@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-
+import '../Login.css'; // Assuming you have a CSS file for styling
 
 const LoginForm = () => {
   const [email, setEmail] = useState('');
