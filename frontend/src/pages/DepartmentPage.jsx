@@ -19,7 +19,7 @@ const departmentCourses = {
     "CTIS 487", "CTIS 488", "CTIS 489", "CTIS 491", "CTIS 492",
     "CTIS 493", "CTIS 496", "CTIS 497", "CTIS 498", "CTIS 499"
   ],
-  // Add other departments as needed
+  
 };
 export default function DepartmentPage() {
   const { deptName } = useParams();
@@ -62,8 +62,8 @@ export default function DepartmentPage() {
           {courses.map((course, index) => (
             <Link 
               key={index}
-              to={`/forum/${encodeURIComponent(course)}`}
-              style={{ padding: '1rem', border: '1px solid #ccc' }}
+              to={`/course/${encodeURIComponent(course)}`}
+              style={{ padding: '1rem', border: '1px solid #3ac0e9ff' }}
             >
               {course}
             </Link>

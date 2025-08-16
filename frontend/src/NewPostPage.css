@@ -1,0 +1,29 @@
+.course-page {
+  flex: 1;
+  padding: 100px 20px 20px;
+  max-width: 800px;
+  margin: auto;
+  color: white;
+}
+
+.post-form textarea {
+  resize: none;
+  min-height: 120px;
+  margin-bottom: 10px;
+  padding: 12px;
+  border-radius: 5px;
+  width: 100%;
+}
+
+.post-form button {
+  padding: 10px 20px;
+  border: none;
+  background-color: #498dd1;
+  color: white;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.post-form button:hover {
+  background-color: #357abd;
+}
