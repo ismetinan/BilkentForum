@@ -2,12 +2,14 @@ import { useContext } from "react";
 import { Navigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 
-export const Private = ({ children }) => {
-  const { token } = useContext(AuthContext);
+const PrivateRoute = ({ children }) => {
+  const { token, loading } = useContext(AuthContext);
 
-  if (!token) {
-    return <Navigate to="/login" replace />;
+  if (loading) {
+    return <div>Loading...</div>; // 👈 show spinner/skeleton here
   }
 
-  return children;
+  return token ? children : <Navigate to="/login" />;
 };
+
+export default PrivateRoute;

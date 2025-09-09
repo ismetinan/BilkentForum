@@ -11,6 +11,39 @@ import (
 	"github.com/google/uuid"
 )
 
+type Attachment struct {
+	ID        uuid.UUID
+	PostID    uuid.UUID
+	FileUrl   string
+	FileName  sql.NullString
+	MimeType  sql.NullString
+	FileSize  sql.NullInt64
+	CreatedAt sql.NullTime
+}
+
+type Flag struct {
+	ID        uuid.UUID
+	PostID    uuid.UUID
+	UserID    uuid.UUID
+	Reason    sql.NullString
+	CreatedAt sql.NullTime
+}
+
+type Post struct {
+	ID        uuid.UUID
+	AuthorID  uuid.UUID
+	CourseID  string
+	Topic     string
+	CreatedAt sql.NullTime
+	UpdatedAt sql.NullTime
+}
+
+type PostVote struct {
+	PostID    uuid.UUID
+	UserID    uuid.UUID
+	CreatedAt sql.NullTime
+}
+
 type RefreshToken struct {
 	Token     string
 	CreatedAt time.Time

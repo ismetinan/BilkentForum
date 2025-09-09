@@ -14,6 +14,14 @@ import (
 	_ "github.com/lib/pq"
 )
 
+type Post struct {
+	ID        string    `json:"id"`
+	AuthorID  string    `json:"author_id"`
+	CourseID  string    `json:"course_id"`
+	Topic     string    `json:"topic"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+}
 type LoginRequest struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
@@ -68,6 +76,7 @@ func main() {
 	mux.HandleFunc("GET /api/healthz", checkHealth)
 	mux.HandleFunc("POST /api/users", apiConfig.handlerUsersCreate)
 	mux.HandleFunc("POST /api/login", apiConfig.handlerLogin)
+	mux.HandleFunc("POST /api/posts", apiConfig.handlerCreatePost)
 	mux.HandleFunc("POST /api/refresh", apiConfig.handlerRefresh)
 	mux.HandleFunc("POST /api/revoke", apiConfig.handlerRevoke)
 

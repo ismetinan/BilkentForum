@@ -7,32 +7,44 @@ import { useNavigate } from 'react-router-dom';
 import '../Login.css'; // Assuming you have a CSS file for styling
 
 const LoginForm = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const { setToken } = useContext(AuthContext);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const { login } = useContext(AuthContext);
   const navigate = useNavigate();
-  const login = (token) => {
-    setToken(token);
-    localStorage.setItem('accessToken', token); // Save access token to localStorage
-  };
+
   const handleLogin = async (e) => {
     e.preventDefault();
+
     if (!email || !password) {
       alert("Please enter both email and password.");
       return;
     }
-    const response = await fetch("http://localhost:8080/api/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-    });
 
-    if (response.ok) {
+    try {
+      const response = await fetch("http://localhost:8080/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (!response.ok) {
+        alert("Login failed. Please check your credentials.");
+        return;
+      }
+
       const data = await response.json();
-      setToken(data.token); // Save to context
-      navigate("/home");        // Go to homepage
-    } else {
-      console.error("Login failed");
+
+      // ✅ Save both tokens
+      // ✅ Save token via context
+      login(data.token);
+      localStorage.setItem("refreshToken", data.refresh_token); // refresh token if you want to persist it
+      localStorage.setItem("accessToken", data.token);
+
+      // ✅ Redirect to homepage
+      navigate("/home");
+    } catch (error) {
+      console.error("Error during login:", error);
+      alert("Something went wrong. Please try again.");
     }
   };
 
