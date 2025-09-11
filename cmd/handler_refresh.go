@@ -1,5 +1,17 @@
 package main
 
+//
+//
+//
+//
+//
+// DEPRACATED: This file will be removed in future versions. Use cmd/handler_login.go instead.
+//
+//
+//
+//
+//
+/*
 import (
 	"net/http"
 	"time"
@@ -7,6 +19,7 @@ import (
 	"github.com/ismetinan/BilkentForum/internal/auth"
 )
 
+// Resfresh tokeni kullanarak kullanıcıya yeni access token oluşturur
 func (cfg *apiConfig) handlerRefresh(w http.ResponseWriter, r *http.Request) {
 	type response struct {
 		Token string `json:"token"`
@@ -54,3 +67,4 @@ func (cfg *apiConfig) handlerRevoke(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusNoContent)
 }
+*/

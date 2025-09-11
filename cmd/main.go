@@ -39,8 +39,7 @@ type User struct {
 }
 
 func main() {
-	// This is the main entry point of the application.
-	// You can initialize your application here.
+
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file")
@@ -52,6 +51,7 @@ func main() {
 	if jwtSecret == "" {
 		log.Fatal("JWT_SECRET environment variable is not set")
 	}
+
 	db, err := sql.Open("postgres", dbURL)
 	if err != nil {
 		fmt.Println("Error opening database:", err)
@@ -62,9 +62,12 @@ func main() {
 		DatabaseQueries: database.New(db),
 		jwtSecret:       jwtSecret,
 	}
+
+	// apiConfigin bulundurduğu DatabaseQueries bize direkt olarak database'e sorgu göndermeye ve yanıt almaya yarar
+
 	fmt.Println("Database connection established")
 	fmt.Println("Starting the Bilkent Forum API...")
-	fmt.Println(apiConfig.DatabaseQueries)
+
 	mux := http.NewServeMux()
 	server := &http.Server{
 		Addr:    ":8080",
@@ -76,8 +79,8 @@ func main() {
 	mux.HandleFunc("GET /api/healthz", checkHealth)
 	mux.HandleFunc("POST /api/users", apiConfig.handlerUsersCreate)
 	mux.HandleFunc("POST /api/login", apiConfig.handlerLogin)
-	mux.HandleFunc("POST /api/refresh", apiConfig.handlerRefresh)
-	mux.HandleFunc("POST /api/revoke", apiConfig.handlerRevoke)
+	//mux.HandleFunc("POST /api/refresh", apiConfig.handlerRefresh)
+	//mux.HandleFunc("POST /api/revoke", apiConfig.handlerRevoke)
 	mux.HandleFunc("GET /api/validate", apiConfig.handlerValidate)
 
 	fmt.Println("Starting server on http://localhost:8080")
