@@ -8,7 +8,7 @@ const Footer = () => {
         Bilkent Forum is a platform to make the sources reachable for everyone.
       </p>
       <a
-        href="https://linkedin.com/in/your-profile"
+        href="https://www.linkedin.com/in/ismet-i-29a1682a5/"
         target="_blank"
         rel="noopener noreferrer"
         className="footer-link"

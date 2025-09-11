@@ -76,9 +76,9 @@ func main() {
 	mux.HandleFunc("GET /api/healthz", checkHealth)
 	mux.HandleFunc("POST /api/users", apiConfig.handlerUsersCreate)
 	mux.HandleFunc("POST /api/login", apiConfig.handlerLogin)
-	mux.HandleFunc("POST /api/posts", apiConfig.handlerCreatePost)
 	mux.HandleFunc("POST /api/refresh", apiConfig.handlerRefresh)
 	mux.HandleFunc("POST /api/revoke", apiConfig.handlerRevoke)
+	mux.HandleFunc("GET /api/validate", apiConfig.handlerValidate)
 
 	fmt.Println("Starting server on http://localhost:8080")
 

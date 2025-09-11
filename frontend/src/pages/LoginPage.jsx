@@ -46,7 +46,7 @@ const LoginForm = () => {
       console.error("Error during login:", error);
       alert("Something went wrong. Please try again.");
     }
-  };
+  };  
 
 
   return (
@@ -56,7 +56,7 @@ const LoginForm = () => {
         <input
           className="login-input"
           type="email"
-          placeholder="E-mail Address"
+          placeholder="E-mail Address (@ug.bilkent.edu.tr)"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
@@ -69,8 +69,8 @@ const LoginForm = () => {
         />
         <button className="login-button" type="submit">LOGIN</button>
       </form>
-          <div className="login-links">
-            <a href="#" style={{ color: '#aaa' }}>Forgot my Password</a> &nbsp;•&nbsp;
+          <div className="login-links">&nbsp;•&nbsp;
+            <a href="#" style={{ color: '#aaa' }}>Forgot my Password</a>&nbsp;•&nbsp;
             <Link to="/register" style={{ color: '#aaa' }}>Register</Link>
           </div>
     </div>
