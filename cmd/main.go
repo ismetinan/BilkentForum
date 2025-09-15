@@ -1,41 +1,29 @@
 package main
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
-	"time"
 
-	"github.com/google/uuid"
+	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/ismetinan/BilkentForum/internal/database"
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 )
 
-type Post struct {
-	ID        string    `json:"id"`
-	AuthorID  string    `json:"author_id"`
-	CourseID  string    `json:"course_id"`
-	Topic     string    `json:"topic"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
-}
 type LoginRequest struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
 }
 type apiConfig struct {
 	DatabaseQueries *database.Queries
+	S3BucketName    string
+	s3Client        *s3.Client
 	jwtSecret       string
-}
-type User struct {
-	ID             uuid.UUID
-	CreatedAt      time.Time
-	UpdatedAt      time.Time
-	Email          string
-	HashedPassword string
 }
 
 func main() {
@@ -58,9 +46,19 @@ func main() {
 		return
 	}
 	defer db.Close()
+
+	cfgAWS, err := config.LoadDefaultConfig(context.TODO(), config.WithRegion("eu-central-1"))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	s3Client := s3.NewFromConfig(cfgAWS)
+
 	apiConfig := &apiConfig{
 		DatabaseQueries: database.New(db),
 		jwtSecret:       jwtSecret,
+		S3BucketName:    os.Getenv("BUCKET_NAME"),
+		s3Client:        s3Client,
 	}
 
 	// apiConfigin bulundurduğu DatabaseQueries bize direkt olarak database'e sorgu göndermeye ve yanıt almaya yarar
@@ -79,9 +77,10 @@ func main() {
 	mux.HandleFunc("GET /api/healthz", checkHealth)
 	mux.HandleFunc("POST /api/users", apiConfig.handlerUsersCreate)
 	mux.HandleFunc("POST /api/login", apiConfig.handlerLogin)
+	mux.HandleFunc("GET /api/validate", apiConfig.handlerValidate)
+	mux.HandleFunc("POST /api/posts", apiConfig.handlerPostsCreate)
 	//mux.HandleFunc("POST /api/refresh", apiConfig.handlerRefresh)
 	//mux.HandleFunc("POST /api/revoke", apiConfig.handlerRevoke)
-	mux.HandleFunc("GET /api/validate", apiConfig.handlerValidate)
 
 	fmt.Println("Starting server on http://localhost:8080")
 

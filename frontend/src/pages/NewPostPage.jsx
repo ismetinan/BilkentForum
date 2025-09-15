@@ -9,16 +9,45 @@ export default function NewPostPage() {
   const decodedCourse = decodeURIComponent(courseName);
   const navigate = useNavigate();
 
-  const [newPost, setNewPost] = useState("");
+  const [title, setTitle] = useState("");
+  const [attachments, setAttachments] = useState([]);
 
-  const handleSubmit = (e) => {
+  const handleFiles = (e) => {
+    setAttachments(Array.from(e.target.files));
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!newPost.trim()) return;
+    if (!title.trim()) return;
 
-    // Later: send to backend here
-    console.log("New post:", newPost);
+    const formData = new FormData();
+    formData.append("course_id", decodedCourse);
+    formData.append("topic", title);
 
-    navigate(`/course/${encodeURIComponent(decodedCourse)}`); // go back to forum
+    attachments.forEach((file) => formData.append("attachments[]", file));
+
+    try {
+      const accessToken = localStorage.getItem("accessToken"); // JWT varsa
+      const res = await fetch("/api/posts", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: formData,
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to create post");
+      }
+
+      const data = await res.json();
+      console.log("Created post:", data);
+
+      navigate(`/course/${encodeURIComponent(decodedCourse)}`);
+    } catch (err) {
+      console.error(err);
+      alert("Error creating post");
+    }
   };
 
   return (
@@ -28,11 +57,21 @@ export default function NewPostPage() {
         <h2>Create a New Post in {decodedCourse}</h2>
 
         <form onSubmit={handleSubmit} className="post-form">
-          <textarea
-            value={newPost}
-            onChange={(e) => setNewPost(e.target.value)}
-            placeholder="Write your post..."
-          ></textarea>
+          <input
+            type="text"
+            placeholder="Post Title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            required
+          />
+
+          <input
+            type="file"
+            multiple
+            accept=".pdf"
+            onChange={handleFiles}
+          />
+
           <button type="submit">Publish</button>
         </form>
       </main>

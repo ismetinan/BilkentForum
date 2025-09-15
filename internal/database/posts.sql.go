@@ -7,35 +7,24 @@ package database
 
 import (
 	"context"
-	"database/sql"
 
 	"github.com/google/uuid"
 )
 
 const createPost = `-- name: CreatePost :one
-INSERT INTO posts (id, author_id, course_id, topic, created_at, updated_at)
-VALUES ($1, $2, $3, $4, $5, $6)
+INSERT INTO posts (author_id, course_id, topic)
+VALUES ($1, $2, $3)
 RETURNING id, author_id, course_id, topic, created_at, updated_at
 `
 
 type CreatePostParams struct {
-	ID        uuid.UUID
-	AuthorID  uuid.UUID
-	CourseID  string
-	Topic     string
-	CreatedAt sql.NullTime
-	UpdatedAt sql.NullTime
+	AuthorID uuid.UUID
+	CourseID string
+	Topic    string
 }
 
 func (q *Queries) CreatePost(ctx context.Context, arg CreatePostParams) (Post, error) {
-	row := q.db.QueryRowContext(ctx, createPost,
-		arg.ID,
-		arg.AuthorID,
-		arg.CourseID,
-		arg.Topic,
-		arg.CreatedAt,
-		arg.UpdatedAt,
-	)
+	row := q.db.QueryRowContext(ctx, createPost, arg.AuthorID, arg.CourseID, arg.Topic)
 	var i Post
 	err := row.Scan(
 		&i.ID,
@@ -46,4 +35,59 @@ func (q *Queries) CreatePost(ctx context.Context, arg CreatePostParams) (Post, e
 		&i.UpdatedAt,
 	)
 	return i, err
+}
+
+const getPostByID = `-- name: GetPostByID :one
+SELECT id, author_id, course_id, topic, created_at, updated_at FROM posts
+WHERE id = $1
+`
+
+func (q *Queries) GetPostByID(ctx context.Context, id uuid.UUID) (Post, error) {
+	row := q.db.QueryRowContext(ctx, getPostByID, id)
+	var i Post
+	err := row.Scan(
+		&i.ID,
+		&i.AuthorID,
+		&i.CourseID,
+		&i.Topic,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
+const listPostsByCourse = `-- name: ListPostsByCourse :many
+SELECT id, author_id, course_id, topic, created_at, updated_at FROM posts
+WHERE course_id = $1
+ORDER BY created_at DESC
+`
+
+func (q *Queries) ListPostsByCourse(ctx context.Context, courseID string) ([]Post, error) {
+	rows, err := q.db.QueryContext(ctx, listPostsByCourse, courseID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Post
+	for rows.Next() {
+		var i Post
+		if err := rows.Scan(
+			&i.ID,
+			&i.AuthorID,
+			&i.CourseID,
+			&i.Topic,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
