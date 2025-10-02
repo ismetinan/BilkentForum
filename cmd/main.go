@@ -78,7 +78,7 @@ func main() {
 	mux.HandleFunc("POST /api/users", apiConfig.handlerUsersCreate)
 	mux.HandleFunc("POST /api/login", apiConfig.handlerLogin)
 	mux.HandleFunc("GET /api/validate", apiConfig.handlerValidate)
-	mux.HandleFunc("POST /api/posts", apiConfig.handlerPostsCreate)
+	mux.Handle("/api/posts", apiConfig.jwtMiddleware(http.HandlerFunc(apiConfig.handlerPostsCreate)))
 	//mux.HandleFunc("POST /api/refresh", apiConfig.handlerRefresh)
 	//mux.HandleFunc("POST /api/revoke", apiConfig.handlerRevoke)
 

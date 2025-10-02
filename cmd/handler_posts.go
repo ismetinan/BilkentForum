@@ -15,10 +15,10 @@ import (
 	"github.com/ismetinan/BilkentForum/internal/database"
 )
 
-func (cfg *apiConfig) uploadToS3(file multipart.File, filename, contentType string) (string, error) {
+func (cfg *apiConfig) uploadToS3(file multipart.File, key, contentType string) (string, error) {
 	_, err := cfg.s3Client.PutObject(context.TODO(), &s3.PutObjectInput{
 		Bucket:      aws.String(cfg.S3BucketName),
-		Key:         aws.String(filename),
+		Key:         aws.String(key),
 		Body:        file,
 		ContentType: aws.String(contentType),
 		ACL:         types.ObjectCannedACLPrivate,
@@ -27,8 +27,9 @@ func (cfg *apiConfig) uploadToS3(file multipart.File, filename, contentType stri
 		return "", err
 	}
 
-	// Private olduğunda direkt URL çalışmaz, ama presigned için kullanılabilir
-	url := fmt.Sprintf("https://%s.s3.amazonaws.com/%s", cfg.S3BucketName, filename)
+	// public URL sadece test için, ACL PublicRead değilse erişim token gerekir
+	url := fmt.Sprintf("https://%s.s3.amazonaws.com/%s", cfg.S3BucketName, key)
+	fmt.Println("Uploaded to S3:", url)
 	return url, nil
 }
 
@@ -41,7 +42,11 @@ func (cfg *apiConfig) handlerPostsCreate(w http.ResponseWriter, r *http.Request)
 
 	courseID := r.FormValue("course_id")
 	topic := r.FormValue("topic")
-	authorID := r.Context().Value("user_id").(uuid.UUID)
+	authorID, ok := r.Context().Value(userIDKey).(uuid.UUID)
+	if !ok {
+		respondWithError(w, http.StatusUnauthorized, "user not found in context", nil)
+		return
+	}
 
 	if courseID == "" || topic == "" {
 		respondWithError(w, http.StatusBadRequest, "Missing course_id or topic", nil)
@@ -61,7 +66,7 @@ func (cfg *apiConfig) handlerPostsCreate(w http.ResponseWriter, r *http.Request)
 
 	attachments := []database.Attachment{}
 
-	files := r.MultipartForm.File["attachments"]
+	files := r.MultipartForm.File["attachments[]"]
 	for _, fh := range files {
 		file, err := fh.Open()
 		if err != nil {
