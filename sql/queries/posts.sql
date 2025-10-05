@@ -8,7 +8,8 @@ RETURNING id, author_id, course_id, topic, created_at, updated_at;
 SELECT * FROM posts
 WHERE id = $1;
 
--- name: ListPostsByCourse :many
-SELECT * FROM posts
+-- name: ListPosts :many
+SELECT id, author_id, course_id, topic, created_at, updated_at
+FROM posts
 WHERE course_id = $1
 ORDER BY created_at DESC;

@@ -3,7 +3,9 @@ package main
 import (
 	"context"
 	"database/sql"
+	"encoding/json"
 	"fmt"
+	"log"
 	"mime/multipart"
 	"net/http"
 	"time"
@@ -14,6 +16,24 @@ import (
 	"github.com/google/uuid"
 	"github.com/ismetinan/BilkentForum/internal/database"
 )
+
+type respAttachment struct {
+	ID       uuid.UUID `json:"id"`
+	FileUrl  string    `json:"url"`
+	FileName string    `json:"file_name"`
+	MimeType string    `json:"mime_type"`
+	FileSize int64     `json:"file_size"`
+}
+
+type response struct {
+	ID          uuid.UUID        `json:"id"`
+	AuthorID    string           `json:"author_id"`
+	CourseID    string           `json:"course_id"`
+	Topic       string           `json:"topic"`
+	CreatedAt   time.Time        `json:"created_at"`
+	UpdatedAt   time.Time        `json:"updated_at"`
+	Attachments []respAttachment `json:"attachments"`
+}
 
 func (cfg *apiConfig) uploadToS3(file multipart.File, key, contentType string) (string, error) {
 	_, err := cfg.s3Client.PutObject(context.TODO(), &s3.PutObjectInput{
@@ -31,6 +51,63 @@ func (cfg *apiConfig) uploadToS3(file multipart.File, key, contentType string) (
 	url := fmt.Sprintf("https://%s.s3.amazonaws.com/%s", cfg.S3BucketName, key)
 	fmt.Println("Uploaded to S3:", url)
 	return url, nil
+}
+
+func (cfg *apiConfig) handlerListPosts(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	courseID := r.URL.Query().Get("course_id")
+	if courseID == "" {
+		http.Error(w, "missing course_id", http.StatusBadRequest)
+		return
+	}
+
+	posts, err := cfg.DatabaseQueries.ListPostsByCourse(r.Context(), courseID)
+	if err != nil {
+		log.Println("DB error:", err)
+		http.Error(w, "could not fetch posts", http.StatusInternalServerError)
+		return
+	}
+	if posts == nil {
+		posts = []database.ListPostsByCourseRow{}
+	}
+
+	var respPosts []response
+	for _, post := range posts {
+		var attachments []respAttachment
+		if post.Attachments != nil {
+			data, ok := post.Attachments.([]byte) // JSONB aslında []byte gelir
+			if !ok {
+				log.Println("Attachments type assertion failed")
+			} else {
+				if err := json.Unmarshal(data, &attachments); err != nil {
+					log.Println("Failed to unmarshal attachments:", err)
+				}
+			}
+		}
+
+		respPosts = append(respPosts, response{
+			ID:          post.ID,
+			AuthorID:    post.AuthorID.String(),
+			CourseID:    post.CourseID,
+			Topic:       post.Topic,
+			CreatedAt:   post.CreatedAt.Time,
+			UpdatedAt:   post.UpdatedAt.Time,
+			Attachments: attachments,
+		})
+	}
+
+	// JSON yanıtı oluştur ve gönder
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(respPosts); err != nil {
+		log.Println("JSON encode error:", err)
+		http.Error(w, "failed to encode posts", http.StatusInternalServerError)
+		return
+	}
 }
 
 func (cfg *apiConfig) handlerPostsCreate(w http.ResponseWriter, r *http.Request) {
@@ -63,9 +140,13 @@ func (cfg *apiConfig) handlerPostsCreate(w http.ResponseWriter, r *http.Request)
 		respondWithError(w, http.StatusInternalServerError, "Couldn't create post", err)
 		return
 	}
+	// Parse form, maxMemory ile sınır koy
+	if err := r.ParseMultipartForm(32 << 20); err != nil { // 32 MB
+		http.Error(w, "failed to parse multipart form", http.StatusBadRequest)
+		return
+	}
 
 	attachments := []database.Attachment{}
-
 	files := r.MultipartForm.File["attachments[]"]
 	for _, fh := range files {
 		file, err := fh.Open()

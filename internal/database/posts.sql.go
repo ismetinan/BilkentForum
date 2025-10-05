@@ -56,14 +56,15 @@ func (q *Queries) GetPostByID(ctx context.Context, id uuid.UUID) (Post, error) {
 	return i, err
 }
 
-const listPostsByCourse = `-- name: ListPostsByCourse :many
-SELECT id, author_id, course_id, topic, created_at, updated_at FROM posts
+const listPosts = `-- name: ListPosts :many
+SELECT id, author_id, course_id, topic, created_at, updated_at
+FROM posts
 WHERE course_id = $1
 ORDER BY created_at DESC
 `
 
-func (q *Queries) ListPostsByCourse(ctx context.Context, courseID string) ([]Post, error) {
-	rows, err := q.db.QueryContext(ctx, listPostsByCourse, courseID)
+func (q *Queries) ListPosts(ctx context.Context, courseID string) ([]Post, error) {
+	rows, err := q.db.QueryContext(ctx, listPosts, courseID)
 	if err != nil {
 		return nil, err
 	}

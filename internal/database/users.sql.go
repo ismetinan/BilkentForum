@@ -7,27 +7,38 @@ package database
 
 import (
 	"context"
+	"database/sql"
 )
 
 const createUser = `-- name: CreateUser :one
-INSERT INTO users (id, created_at, updated_at, email, hashed_password)
+INSERT INTO users (id, created_at, updated_at, email, hashed_password, is_verified, verification_code, verification_expires)
 VALUES (
     gen_random_uuid(),
     NOW(),
     NOW(),
-    $1,
-    $2
+    $1, -- email
+    $2, -- hashed_password
+    FALSE, -- default unverified
+    $3, -- verification_code
+    $4  -- verification_expires
 )
-RETURNING id, created_at, updated_at, email, hashed_password
+RETURNING id, created_at, updated_at, email, hashed_password, is_verified, verification_code, verification_expires
 `
 
 type CreateUserParams struct {
-	Email          string
-	HashedPassword string
+	Email               string
+	HashedPassword      string
+	VerificationCode    sql.NullString
+	VerificationExpires sql.NullTime
 }
 
 func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, error) {
-	row := q.db.QueryRowContext(ctx, createUser, arg.Email, arg.HashedPassword)
+	row := q.db.QueryRowContext(ctx, createUser,
+		arg.Email,
+		arg.HashedPassword,
+		arg.VerificationCode,
+		arg.VerificationExpires,
+	)
 	var i User
 	err := row.Scan(
 		&i.ID,
@@ -35,12 +46,15 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 		&i.UpdatedAt,
 		&i.Email,
 		&i.HashedPassword,
+		&i.IsVerified,
+		&i.VerificationCode,
+		&i.VerificationExpires,
 	)
 	return i, err
 }
 
 const getUserByEmail = `-- name: GetUserByEmail :one
-SELECT id, created_at, updated_at, email, hashed_password FROM users
+SELECT id, created_at, updated_at, email, hashed_password, is_verified, verification_code, verification_expires FROM users
 WHERE email = $1
 `
 
@@ -53,6 +67,9 @@ func (q *Queries) GetUserByEmail(ctx context.Context, email string) (User, error
 		&i.UpdatedAt,
 		&i.Email,
 		&i.HashedPassword,
+		&i.IsVerified,
+		&i.VerificationCode,
+		&i.VerificationExpires,
 	)
 	return i, err
 }
