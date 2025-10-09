@@ -70,7 +70,7 @@ const LoginForm = () => {
         <button className="login-button" type="submit">LOGIN</button>
       </form>
           <div className="login-links">&nbsp;•&nbsp;
-            <a href="#" style={{ color: '#aaa' }}>Forgot my Password</a>&nbsp;•&nbsp;
+            <Link to="/forgotpassword" style={{ color: '#aaa' }}>Forgot my Password</Link>&nbsp;•&nbsp;
             <Link to="/register" style={{ color: '#aaa' }}>Register</Link>
           </div>
     </div>

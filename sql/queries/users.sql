@@ -16,3 +16,7 @@ RETURNING id, created_at, updated_at, email, hashed_password, is_verified, verif
 -- name: GetUserByEmail :one
 SELECT * FROM users
 WHERE email = $1;
+
+-- name: DeleteUser :exec
+DELETE FROM users WHERE id = $1;
+

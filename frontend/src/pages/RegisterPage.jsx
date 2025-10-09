@@ -36,7 +36,7 @@ export default function RegisterPage() {
         throw new Error(result.error || "Registration failed");
       }
 
-      navigate('/login'); // Redirect to login
+      navigate('/verify', { state: { email } }); // Email'i verify sayfasına taşı
     } catch (err) {
       setError(err.message);
     }

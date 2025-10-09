@@ -11,6 +11,9 @@ import CoursePage from "./pages/CoursePage";
 import NewPostPage from "./pages/NewPostPage";
 import AboutPage from "./pages/AboutPage";
 import ProfilePage from "./pages/ProfilePage";
+import VerifyPage from "./pages/VerifyPage";
+import ResetPasswordPage from "./pages/ResetPasswordPage";
+import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 
 function App() {
   return (
@@ -21,6 +24,9 @@ function App() {
       <Route path="/about" element={<AboutPage />} />
       <Route path="/department/:deptName" element={<DepartmentPage />} />
       <Route path="/course/:courseName" element={<CoursePage />} />
+      <Route path="/verify" element={<VerifyPage />} />
+      <Route path="/passwordreset" element={<ResetPasswordPage />} />
+      <Route path="/forgotpassword" element={<ForgotPasswordPage />} />
 
       {/* Protected routes */}
       <Route
