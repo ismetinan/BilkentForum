@@ -1,5 +1,6 @@
 package email
 
+/*
 import (
 	"context"
 	"fmt"
@@ -9,7 +10,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/ses"
 )
-
+ <TODO: SES ile e-posta gönderme işlevi ekle>
 // SendEmailSES -> AWS SES üzerinden e-posta gönderir
 func SendEmailSES(region, from, to, subject, body string) error {
 	// AWS config yükle
@@ -45,3 +46,4 @@ func SendEmailSES(region, from, to, subject, body string) error {
 	log.Printf("📨 Email sent to %s", to)
 	return nil
 }
+*/
