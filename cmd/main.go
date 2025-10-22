@@ -82,6 +82,7 @@ func main() {
 	mux.Handle("/api/posts", apiConfig.jwtMiddleware(http.HandlerFunc(apiConfig.handlerPostsCreate)))
 	mux.HandleFunc("/api/admin/delete-user", apiConfig.handlerDeleteUser)
 	mux.HandleFunc("/api/delete-post", apiConfig.handlerDeletePost)
+	mux.HandleFunc("/api/verify", apiConfig.handlerVerification)
 
 	//mux.HandleFunc("POST /api/refresh", apiConfig.handlerRefresh)
 	//mux.HandleFunc("POST /api/revoke", apiConfig.handlerRevoke)
