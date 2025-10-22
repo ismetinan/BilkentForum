@@ -19,7 +19,7 @@ export default function VerifyPage() {
     }
 
     try {
-      const response = await fetch('http://localhost:8080/api/verify', {
+      const response = await fetch('api/verify', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
