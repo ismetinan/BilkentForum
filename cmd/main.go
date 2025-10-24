@@ -83,6 +83,7 @@ func main() {
 	mux.HandleFunc("/api/admin/delete-user", apiConfig.handlerDeleteUser)
 	mux.HandleFunc("/api/delete-post", apiConfig.handlerDeletePost)
 	mux.HandleFunc("/api/verify", apiConfig.handlerVerification)
+	mux.HandleFunc("/api/verify/code", apiConfig.handlerVerifyCode)
 
 	//mux.HandleFunc("POST /api/refresh", apiConfig.handlerRefresh)
 	//mux.HandleFunc("POST /api/revoke", apiConfig.handlerRevoke)

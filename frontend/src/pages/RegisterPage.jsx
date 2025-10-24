@@ -1,15 +1,15 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function RegisterPage() {
-  const [email, setEmail] = useState('');
-  const [fullName, setFullName] = useState(''); // In your backend you don't handle name, but added here in case you expand later
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [error, setError] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
   const navigate = useNavigate();
 
-  const handleRegister = async (e) => {
+  const handleSendVerification = async (e) => {
     e.preventDefault();
 
     if (password !== confirmPassword) {
@@ -17,26 +17,25 @@ export default function RegisterPage() {
       return;
     }
 
-    if (!email.endsWith('@ug.bilkent.edu.tr')) {
-      setError("Only Bilkent emails allowed.");
+    if (!email.endsWith("@ug.bilkent.edu.tr")) {
+      setError("Only Bilkent emails are allowed.");
       return;
     }
 
     try {
-      const response = await fetch('http://localhost:8080/api/users', {
+      const res = await fetch('http://localhost:8080/api/verify', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
       });
 
-      if (!response.ok) {
-        const result = await response.json();
-        throw new Error(result.error || "Registration failed");
-      }
+      if (!res.ok) throw new Error("Failed to send verification email.");
 
-      navigate('/verify', { state: { email } }); // Email'i verify sayfasına taşı
+      setMessage("Verification code sent to your email!");
+      setError("");
+
+      // go to verify page with email & password
+      navigate("/verify", { state: { email, password } });
     } catch (err) {
       setError(err.message);
     }
@@ -44,22 +43,19 @@ export default function RegisterPage() {
 
   return (
     <div className="login-container">
-      <form className="register-form" onSubmit={handleRegister}>
-        <h2 style={{ textAlign: 'center' }}>REGISTER</h2>
-        {error && <p style={{ color: 'red' }}>{error}</p>}
-        <input
-          type="text"
-          placeholder="Full Name"
-          className="register-input"
-          value={fullName}
-          onChange={(e) => setFullName(e.target.value)}
-        />
+      <form className="register-form" onSubmit={handleSendVerification}>
+        <h2 style={{ textAlign: "center" }}>REGISTER</h2>
+
+        {error && <p style={{ color: "red" }}>{error}</p>}
+        {message && <p style={{ color: "green" }}>{message}</p>}
+
         <input
           type="email"
           placeholder="Bilkent Email (@ug.bilkent.edu.tr)"
           className="register-input"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          required
         />
         <input
           type="password"
@@ -67,6 +63,7 @@ export default function RegisterPage() {
           className="register-input"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          required
         />
         <input
           type="password"
@@ -74,10 +71,16 @@ export default function RegisterPage() {
           className="register-input"
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
+          required
         />
-        <button type="submit" className="register-button">Register</button>
-        <div style={{ marginTop: '1rem' }}>
-          <a href="/login" style={{ color: '#aaa' }}>Back to Login</a>
+        <button type="submit" className="register-button">
+          Send Verification Code
+        </button>
+
+        <div style={{ marginTop: "1rem" }}>
+          <a href="/login" style={{ color: "#aaa" }}>
+            Back to Login
+          </a>
         </div>
       </form>
     </div>
