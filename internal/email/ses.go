@@ -1,49 +1,38 @@
 package email
 
-/*
 import (
-	"context"
 	"fmt"
 	"log"
+	"math/rand"
+	"os"
+	"time"
 
-	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/config"
-	"github.com/aws/aws-sdk-go-v2/service/ses"
+	"github.com/resendlabs/resend-go"
 )
- <TODO: SES ile e-posta gönderme işlevi ekle>
-// SendEmailSES -> AWS SES üzerinden e-posta gönderir
-func SendEmailSES(region, from, to, subject, body string) error {
-	// AWS config yükle
-	cfg, err := config.LoadDefaultConfig(context.TODO(), config.WithRegion(region))
+
+func SendVerificationEmail(to string) (string, error) {
+	// Generate a 6-digit code
+	rand.Seed(time.Now().UnixNano())
+	code := fmt.Sprintf("%06d", rand.Intn(1000000))
+	api_key := os.Getenv("RESEND_API_KEY")
+	client := resend.NewClient(api_key)
+
+	subject := "Your BilkentForum Verification Code"
+	htmlContent := fmt.Sprintf("<p>Your verification code is <strong>%s</strong></p>", code)
+
+	params := &resend.SendEmailRequest{
+		From:    "noreply@bilkentforum.com",
+		To:      []string{to},
+		Subject: subject,
+		Html:    htmlContent,
+	}
+
+	response, err := client.Emails.Send(params)
 	if err != nil {
-		return fmt.Errorf("failed to load AWS config: %w", err)
+		log.Printf("Failed to send email: %v", err)
+		return "", err
 	}
 
-	client := ses.NewFromConfig(cfg)
-
-	input := &ses.SendEmailInput{
-		Destination: &ses.Destination{
-			ToAddresses: []string{to},
-		},
-		Message: &ses.Message{
-			Body: &ses.Body{
-				Text: &ses.Content{
-					Data: aws.String(body),
-				},
-			},
-			Subject: &ses.Content{
-				Data: aws.String(subject),
-			},
-		},
-		Source: aws.String(from), // verified domain/email olmalı
-	}
-
-	_, err = client.SendEmail(context.TODO(), input)
-	if err != nil {
-		return fmt.Errorf("failed to send email: %w", err)
-	}
-
-	log.Printf("📨 Email sent to %s", to)
-	return nil
+	log.Printf("Email sent successfully: %v", response.Id)
+	return code, nil
 }
-*/

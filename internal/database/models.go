@@ -63,3 +63,11 @@ type User struct {
 	VerificationCode    sql.NullString
 	VerificationExpires sql.NullTime
 }
+
+type VerificationCode struct {
+	ID        int32
+	Email     string
+	Code      string
+	CreatedAt sql.NullTime
+	Verified  sql.NullBool
+}
