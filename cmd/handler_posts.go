@@ -8,6 +8,8 @@ import (
 	"log"
 	"mime/multipart"
 	"net/http"
+	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -156,7 +158,8 @@ func (cfg *apiConfig) handlerPostsCreate(w http.ResponseWriter, r *http.Request)
 		defer file.Close()
 
 		mimeType := fh.Header.Get("Content-Type")
-		if mimeType != "application/pdf" {
+		ext := strings.ToLower(filepath.Ext(fh.Filename))
+		if !(mimeType == "application/pdf" || mimeType == "application/zip" || ext == ".pdf" || ext == ".zip") {
 			continue
 		}
 

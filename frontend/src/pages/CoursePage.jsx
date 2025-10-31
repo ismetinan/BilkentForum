@@ -21,7 +21,7 @@ useEffect(() => {
 
       if (!token) throw new Error("No access token");
 
-      const res = await fetch(`api/posts/list?course_id=${decodedCourse}`, {
+      const res = await fetch(`http://localhost:8080/api/posts/list?course_id=${decodedCourse}`, {
         headers: {
           "Authorization": `Bearer ${token}`,
           "Content-Type": "application/json",

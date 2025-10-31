@@ -28,7 +28,7 @@ export default function NewPostPage() {
 
     try {
       const accessToken = localStorage.getItem("accessToken");
-      const res = await fetch("api/posts", {
+      const res = await fetch("http://localhost:8080/api/posts", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${accessToken}`,
